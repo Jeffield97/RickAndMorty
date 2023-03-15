@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./Banner.css";
 const Banner = ({ setLocationSelected, locations, locationSelected }) => {
   const [listNames, setListNames] = useState([]);
+  const inputNameRef = useRef();
+  console.log(locations);
 
   const getLocationById = (id) => {
-    return locations[id];
+    // console.log(locations)
+    const location = locations.filter((location) => {
+      return location.id == id;
+    });
+    console.log(location[0]);
+    return location[0];
   };
   const handleItemSelection = (e) => {
-    setListNames([]);
+    console.log(`Id: ${e.target.id}`);
     const locationSelectedById = getLocationById(e.target.id);
     setLocationSelected(locationSelectedById);
+    setListNames([]);
+    // console.log(e.target.value)
+    console.log(inputNameRef.current.value=locationSelectedById.name)
   };
   const getLocationsByName = (name) => {
     if (name) {
@@ -23,9 +33,8 @@ const Banner = ({ setLocationSelected, locations, locationSelected }) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const value = e.target.idWorld.value;
-    setLocationSelected(locations[value]);
-    console.log(value);
+    const newLocation = getLocationById(e.target.idWorld.value);
+    setLocationSelected(newLocation);
   };
   const handleChangeInput = (e) => {
     console.log(e.target.value);
@@ -47,6 +56,7 @@ const Banner = ({ setLocationSelected, locations, locationSelected }) => {
               type="number"
               placeholder="Type here"
               className="input input-bordered w-4/6 max-w-xs h-8 text-sm"
+              min={1}
               max={116}
             />
           </div>
@@ -63,6 +73,7 @@ const Banner = ({ setLocationSelected, locations, locationSelected }) => {
               placeholder="Type here"
               className="input input-bordered w-4/6 max-w-xs h-8 text-sm"
               max={216}
+              ref={inputNameRef}
             />
             {listNames.length == 0 ? null : (
               <ul className="absolute z-10 top-48 bg-base-200 px-8 rounded-xl border border-white">
@@ -84,7 +95,14 @@ const Banner = ({ setLocationSelected, locations, locationSelected }) => {
         </form>
       </div>
       <div className="mt-8">
-        <h2><span className="font-light">Location selected:</span> {locationSelected?.name}</h2>
+        <h2>
+          <span className="font-light">Location selected:</span>{" "}
+          {locationSelected?.name}
+        </h2>
+        <h2>
+          <span className="font-light">Location Id:</span>{" "}
+          {locationSelected?.id}
+        </h2>
       </div>
     </div>
   );

@@ -7,21 +7,37 @@ import Banner from "./components/Banner/Banner";
 
 function App() {
   const [locations, setLocations] = useState([]);
+  // const [locationRandom, setLocationRandom] = useState([]);
   const [locationSelected, setLocationSelected] = useState(null);
   const getApi = async () => {
     try {
-      const res = await fetch(
+      const data = [];
+      console.time("firstGet");
+      const resTemp = await fetch(
         `https://rickandmortyapi.com/api/location?page=${getRandomNumber(1, 7)}`
       );
-      const data = await res.json();
-      // console.log(data.results);
-      setLocations(data.results);
-      // console.log(`Locations: ${locations}`);
+      const dataTemp = await resTemp.json();
+      // console.log('Restemp:', dataTemp)
       const location =
-        data.results[
-          getRandomNumber(0, getRandomNumber(0, data.results.length - 1))
+        dataTemp.results[
+          getRandomNumber(0, getRandomNumber(0, dataTemp.results.length - 1))
         ];
+      console.log(location);
+      // setLocationRandom(location)
       setLocationSelected(location);
+      console.timeEnd("firstGet");
+
+      console.time("getApi");
+      for (let index = 1; index <= 7; index++) {
+        const res = await fetch(
+          `https://rickandmortyapi.com/api/location?page=${index}`
+        );
+        const resJson = await res.json();
+        data.push(...resJson.results);
+      }
+      console.timeEnd("getApi");
+
+      setLocations(data);
     } catch (error) {
       console.error(`Error al obtener la información :${error}`);
     }
@@ -31,7 +47,7 @@ function App() {
   }, []);
 
   // console.log(locations);
-  console.log(locationSelected);
+  // console.log(locationSelected);
   return (
     <div className="h-screen">
       <Banner
